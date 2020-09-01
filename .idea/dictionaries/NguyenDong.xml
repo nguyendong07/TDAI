@@ -2,10 +2,16 @@
   <dictionary name="NguyenDong">
     <words>
       <w>crossentropy</w>
+      <w>deskew</w>
       <w>keras</w>
       <w>relu</w>
       <w>softmax</w>
       <w>svcclassifer</w>
+      <w>tdai</w>
+      <w>tesseract</w>
+      <w>thres</w>
+      <w>thresholding</w>
+      <w>varbound</w>
     </words>
   </dictionary>
 </component>
