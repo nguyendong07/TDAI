@@ -3,6 +3,7 @@ import cv2
 import os
 import numpy as np
 # import base64
+from PIL import Image
 from AIServer.settings import MEDIA_ROOT
 
 def get_grayscale(image):
@@ -48,9 +49,11 @@ def match_template(image, template):
 def ImageModule(path):
     path = os.path.join(MEDIA_ROOT, path[8:])
     img = cv2.imread(path)
-    custom_config = r'--oem 3 --psm 6 lang = vi'
+    get_grayscale(img)
+    custom_config = r'--oem 3 --psm 6 lang = vie'
     pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+    text = pytesseract.image_to_string(img, config=custom_config)
     return {
             "success": True,
-            "content": pytesseract.image_to_string(img, config=custom_config)
+            "content": text
     }
