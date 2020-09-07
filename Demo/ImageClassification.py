@@ -1,50 +1,75 @@
+#import lib
+from keras.models import Sequential
+from keras.layers import Conv2D
+from keras.layers import MaxPooling2D
+from keras.layers import Flatten
+from keras.layers import Dense
+from keras.layers import Dropout
+from keras.layers import Activation
+from keras.preprocessing.image import ImageDataGenerator
+from keras.preprocessing import image
 import numpy as np
-import matplotlib.pyplot as plt
-import cv2
-from keras import *
-import os
-from tqdm import tqdm
-import random
-datapath = "C:/Users/ABC/Desktop/PetImages"
+#create model
+classifier = Sequential()
 
-Categories = ['Dog', 'Cat']
+classifier.add(Conv2D(32, (3, 3), input_shape=(200, 200, 3), activation='relu'))
+classifier.add(MaxPooling2D(pool_size=(2, 2)))
 
-for category in Categories:
-    path = os.path.join(datapath, category)
-    for img in os.listdir(path):
-        img_array=cv2.imread(os.path.join(path,img), cv2.IMREAD_GRAYSCALE)
-        plt.imshow(img_array, cmap='gray')
-        plt.show()
-        break #just want one for now so break
-    break #...one and more
+classifier.add(Conv2D(32, (3, 3), activation='relu'))
+classifier.add(MaxPooling2D(pool_size=(2, 2)))
 
-print(img_array)
-print(img_array.shape)
-new_size = 50
-new_img = cv2.resize(img_array, (new_size, new_size))
-plt.imshow(new_img, cmap='gray')
-plt.show()
+classifier.add(Conv2D(64, (3, 3), activation='relu'))
+classifier.add(MaxPooling2D(pool_size=(2, 2)))
 
-#create training data
-training_data = []
-def create_training_data():
-    for category in Categories:
-        path = os.path.join(datapath, category)
-        class_num = Categories.index(category)
-        for img in tqdm(os.listdir(path)):
-            try:
-                img_array = cv2.imread(os.path.join(path, img), cv2.IMREAD_GRAYSCALE)
-                new_array = cv2.resize(img_array, (new_size, new_size))
-                training_data.append([new_array, class_num])
-            except Exception as e:
-                pass
-create_training_data()
-print(len(training_data))
+classifier.add(Flatten())
 
-# shuffle data
-random.shuffle(training_data)
-for sample in training_data[:10]:
-    print(sample[1])
+classifier.add(Dense(units=64, activation='relu'))
+
+classifier.add(Dropout(0.5))
+
+# output layer
+classifier.add(Dense(1))
+classifier.add(Activation('sigmoid'))
+
+classifier.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
 
+#data preprocessing
+train_datagen = ImageDataGenerator(rescale=1./255,
+                                   shear_range=0.2,
+                                   zoom_range=0.2,
+                                   horizontal_flip=True)
 
+test_datagen = ImageDataGenerator(rescale=1./255)
+
+#split data
+training_set = train_datagen.flow_from_directory('C:/Users/ABC/Desktop/PetImages/Cat-Train',
+                                                 target_size=(200, 200),
+                                                 batch_size=32,
+                                                 class_mode="binary")
+
+test_set = test_datagen.flow_from_directory('C:/Users/ABC/Desktop/PetImages/Cat-Test',
+                                            target_size=(200, 200),
+                                            batch_size=32,
+                                            class_mode="binary")
+
+#set parameter for model
+history = classifier.fit(training_set,
+                         steps_per_epoch=100,
+                         epochs=20,
+                         validation_data=test_set,
+                         validation_steps=200)
+
+#test model
+test_image = image.load_img('C:/Users/ABC/Desktop/PetImages/Dog/1.JPG', target_size=(200, 200))
+#test_image.show()
+test_image = image.img_to_array(test_image)
+test_image = np.expand_dims(test_image, axis=0)
+result = classifier.predict(test_image)
+training_set.class_indices
+if result[0][0] == 0:
+    prediction = 'This is Cat'
+else:
+    prediction = 'This is not Cat'
+
+print(prediction)
