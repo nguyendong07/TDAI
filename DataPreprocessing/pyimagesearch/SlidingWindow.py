@@ -25,7 +25,8 @@ def sliding_window(image, stepSize, windowSize):
 			yield (x, y, image[y:y + windowSize[1], x:x + windowSize[0]])
 
 image = cv2.imread("C:/Users/ABC/Desktop/New folder/TDAI/Data/vanban.jpg")
-(winW, winH) = (200, 200)
+image = cv2.resize(image, (700, 700))
+(winW, winH) = (100, 100)
 
 for resized in pyramid(image, scale=1.5):
 	for (x, y, window) in sliding_window(resized, stepSize=32, windowSize=(winW, winH)):
