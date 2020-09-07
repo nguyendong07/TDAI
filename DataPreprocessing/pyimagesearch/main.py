@@ -1,4 +1,4 @@
-from ..pyimagesearch.helper import sliding_window, pyramid
+from ..pyimagesearch.SlidingWindow import sliding_window, pyramid
 import argparse
 import time
 import cv2

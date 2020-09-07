@@ -33,7 +33,7 @@ def create_training_data():
         class_num = Categories.index(category)
         for img in tqdm(os.listdir(path)):
             try:
-                img_array = cv2.imread(os.path.join(path,img),cv2.IMREAD_GRAYSCALE)
+                img_array = cv2.imread(os.path.join(path, img), cv2.IMREAD_GRAYSCALE)
                 new_array = cv2.resize(img_array, (new_size, new_size))
                 training_data.append([new_array, class_num])
             except Exception as e:

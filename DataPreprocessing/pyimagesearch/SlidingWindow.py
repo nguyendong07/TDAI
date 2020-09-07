@@ -24,13 +24,8 @@ def sliding_window(image, stepSize, windowSize):
 			# yield the current window
 			yield (x, y, image[y:y + windowSize[1], x:x + windowSize[0]])
 
-
-
-ap = argparse.ArgumentParser()
-ap.add_argument("-i", "--image", required=True, help="Path to the image")
-args = vars(ap.parse_args())
-image = cv2.imread(args["image"])
-(winW, winH) = (128, 128)
+image = cv2.imread("C:/Users/ABC/Desktop/New folder/TDAI/Data/vanban.jpg")
+(winW, winH) = (200, 200)
 
 for resized in pyramid(image, scale=1.5):
 	for (x, y, window) in sliding_window(resized, stepSize=32, windowSize=(winW, winH)):
