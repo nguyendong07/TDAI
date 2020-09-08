@@ -50,9 +50,10 @@ def ImageModule(path):
     path = os.path.join(MEDIA_ROOT, path[8:])
     img = cv2.imread(path)
     get_grayscale(img)
+    remove_noise(img)
     custom_config = r'--oem 3 --psm 6 lang = vie'
     pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
-    text = pytesseract.image_to_string(img, config=custom_config)
+    text = pytesseract.image_to_string(img, lang="vie", config=custom_config)
     return {
             "success": True,
             "content": text

@@ -43,12 +43,12 @@ train_datagen = ImageDataGenerator(rescale=1./255,
 test_datagen = ImageDataGenerator(rescale=1./255)
 
 #split data
-training_set = train_datagen.flow_from_directory('C:/Users/ABC/Desktop/PetImages/Cat-Train',
+training_set = train_datagen.flow_from_directory('C:/Users/ABC/Desktop/PetImages/CatTrain',
                                                  target_size=(200, 200),
                                                  batch_size=32,
                                                  class_mode="binary")
 
-test_set = test_datagen.flow_from_directory('C:/Users/ABC/Desktop/PetImages/Cat-Test',
+test_set = test_datagen.flow_from_directory('C:/Users/ABC/Desktop/PetImages/CatTest',
                                             target_size=(200, 200),
                                             batch_size=32,
                                             class_mode="binary")
