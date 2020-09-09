@@ -29,7 +29,7 @@ def sliding_window(image, stepSize, windowSize):
 
 
 (winW, winH) = (100, 100)
-path = "C:/Users/ABC/Desktop/New folder/TDAI/Data/vanban.jpg"
+path = "C:/Users/ABC/Desktop/New folder/TDAI/Data/nhaqf.jpg"
 
 def Sliding_Window():
     image = cv2.imread(path)
