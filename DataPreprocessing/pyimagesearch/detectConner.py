@@ -10,5 +10,5 @@ conner = np.int0(conner)
 for i in conner:
     x, y = i.ravel()
     cv.circle(img, (x, y), 3, 255, -1)
-cv.imshow('ot' ,img)
+cv.imshow('ot', img)
 cv.waitKey(0)
