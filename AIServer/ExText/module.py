@@ -49,8 +49,12 @@ def match_template(image, template):
 def ImageModule(path):
     path = os.path.join(MEDIA_ROOT, path[8:])
     img = cv2.imread(path)
-    get_grayscale(img)
-    remove_noise(img)
+    imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    imgBlur = cv2.GaussianBlur(imgGray, (7, 7), 1)
+    imgCanny = cv2.Canny(imgBlur, 100, 220)
+    cv2.imshow('img', imgCanny)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
     custom_config = r'--oem 3 --psm 6 lang = vie'
     pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
     text = pytesseract.image_to_string(img, lang="vie", config=custom_config)
