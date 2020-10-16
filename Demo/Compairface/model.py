@@ -1,34 +1,19 @@
 import cv2
 import numpy as np
 import tensorflow as tf
+tf.config.experimental.list_physical_devices('CPU')
 import tensorflow.keras.backend as tfback
+
 from pathlib import Path
+
 from keras.layers import Conv2D, ZeroPadding2D, Activation, Input, concatenate
 from keras.models import Model
 from keras.layers.normalization import BatchNormalization
 from keras.layers.pooling import MaxPooling2D, AveragePooling2D
 from keras.layers.core import Lambda, Flatten, Dense
 
+tfback.set_image_data_format('channels_first')
 
-def get_face(img):
-    '''Crops image to only include face plus a border'''
-    img = cv2.imread(img,1)
-    height, width, channels = img.shape
-    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
-    face_box = face_cascade.detectMultiScale(img)
-    # Get dimensions of bounding box
-    x, y, w, h = tuple(map(tuple, face_box))[0]
-    # Calculate padding as segmentation is too tight.
-    pad_w = int(w/2.5)
-    pad_h = int(h/2.5)
-    # Get co-ordinates of crop
-    x1 = max(0, x-pad_w)
-    y1 = max(0, y-pad_h)
-    x2 = min(width, x+w+pad_w)
-    y2 = min(height, y+h+pad_h)
-    # Crop image
-    cropped = img[y1:y2, x1:x2]
-    return cropped
 
 def conv2d_bn(x, layer_name, filters, kernel_size=(1, 1), strides=(1, 1), i='', epsilon=0.00001):
     '''2D Convolutional Block with Batch normalization and ReLU activation.
@@ -253,10 +238,11 @@ def facenet_model(input_shape):
     # Create model instance
     model = Model(inputs=X_input, outputs=X, name='FaceNetModel')
 
-    weight_fpath =  'facenet_weights.h5'
+    weight_fpath = ('facenet_weights.h5')
     model.load_weights(weight_fpath)
 
     return model
+
 
 def img_to_encoding(image, model):
     # Resize for model
@@ -269,23 +255,21 @@ def img_to_encoding(image, model):
     embedding = model.predict_on_batch(x_train)
     return embedding
 
-image_path_1 = 'test1.jpg'
-image_path_2 = 'test3.jpg'
-cropped_1 = get_face(image_path_1)
-cropped_2 = get_face(image_path_2)
-model = facenet_model(input_shape=(3, 96, 96))
-weight_fpath = 'facenet_weights.h5'
-model.load_weights(weight_fpath)
-# img = np.reshape(img, [1, img.shape[0], img.shape[1], img.shape[2]])
-embedding_one = img_to_encoding(cropped_1, model)
-embedding_two = img_to_encoding(cropped_2, model)
 
-print(embedding_one)
-print(embedding_two)
-dist = np.linalg.norm(embedding_one - embedding_two)
-print(dist)
+def Compareface():
+    model = facenet_model(input_shape=(3, 96, 96))
+    img = cv2.imread('Test.jpg')
+    img2 = cv2.imread('Test.jpg')
+    embedding_one = img_to_encoding(img, model)
+    embedding_two = img_to_encoding(img2, model)
+    # print(embedding_one)
+    # print(embedding_two)
+    dist = np.linalg.norm(embedding_one - embedding_two)
+    print(f'Distance between two images is {dist}')
+    if dist > 0.7:
+        print('These images are of two different people!')
+    else:
+        print('These images are of the same person!')
 
-if (dist < 0.7):
-    print("True")
-else:
-    print("False")
+
+Compareface()
